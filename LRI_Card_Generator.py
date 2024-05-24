@@ -10,8 +10,77 @@ from spire.doc import *
 from spire.doc.common import *
 from docx import Document as dc
 from spire.doc import Document
+import pandas as pd 
+import os 
 
 
+'''----------------------------------------------------------------------------- Data Manuplution --------------------------------------------------------------'''
+
+file_paths = [
+    "LRIDatasets\ARA_4c04_B_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_Cu_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_EC_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_Fe_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_K2O_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_Mn_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_N_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_OC_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_P2O5_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_pH_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_S_TableToExcel.xls",
+    "LRIDatasets\ARA_4c04_Soil_Phase_Union.xls",
+    "LRIDatasets\ARA_4c04_Zn_TableToExcel.xls"
+]
+
+dfs = [pd.read_excel(file_path, engine='xlrd') for file_path in file_paths]
+
+hissa_details = pd.read_excel("LRIDatasets\hissa_details_4c2c4c04.xlsx")
+hissa_details.rename(columns={'BhoomiVillageName': 'Village'}, inplace=True)
+hissa_details.rename(columns={'survey_no': 'DXF_TEXT'}, inplace=True)
+hissa_details['DXF_TEXT'] = pd.to_numeric(hissa_details['DXF_TEXT'], errors='coerce')
+merged_df = pd.DataFrame(hissa_details)
+
+
+for df in dfs:
+    # Convert 'DXF_TEXT' column to numeric if needed
+    df['DXF_TEXT'] = pd.to_numeric(df['DXF_TEXT'], errors='coerce')
+    #df['DXF_TEXT'] = df['DXF_TEXT'].astype(int)
+    print(df)
+    df.head()
+
+for df in dfs:
+    merged_df = pd.merge(df, hissa_details, on=['Village', 'DXF_TEXT'], how="inner")
+
+
+'''
+B = pd.read_excel(r"LRIDatasets\ARA_4c04_B_TableToExcel.xls", engine='xlrd')
+Cu = pd.read_excel(r"LRIDatasets\ARA_4c04_Cu_TableToExcel.xls", engine='xlrd')
+Ec = pd.read_excel(r"LRIDatasets\ARA_4c04_EC_TableToExcel.xls", engine='xlrd')
+Fe = pd.read_excel(r"LRIDatasets\ARA_4c04_Fe_TableToExcel.xls", engine='xlrd')
+K2o = pd.read_excel(r"LRIDatasets\ARA_4c04_K2O_TableToExcel.xls", engine='xlrd')
+Mn = pd.read_excel(r"LRIDatasets\ARA_4c04_Mn_TableToExcel.xls", engine='xlrd')
+N = pd.read_excel(r"LRIDatasets\ARA_4c04_N_TableToExcel.xls", engine='xlrd')
+OC = pd.read_excel(r"LRIDatasets\ARA_4c04_OC_TableToExcel.xls", engine='xlrd')
+P2o5 = pd.read_excel(r"LRIDatasets\ARA_4c04_P2O5_TableToExcel.xls", engine='xlrd')
+pH = pd.read_excel(r"LRIDatasets\ARA_4c04_pH_TableToExcel.xls", engine='xlrd')
+S = pd.read_excel(r"LRIDatasets\ARA_4c04_S_TableToExcel.xls", engine='xlrd')
+Soilphase = pd.read_excel(r"LRIDatasets\ARA_4c04_Soil_Phase_Union.xls", engine='xlrd')
+Zn = pd.read_excel(r"LRIDatasets\ARA_4c04_Zn_TableToExcel.xls", engine='xlrd')
+
+hissa_details = pd.read_excel(r"LRIDatasets\hissa_details_4c2c4c04.xlsx")
+
+hissa_details.rename(columns={'BhoomiVillageName': 'Village'}, inplace=True)
+hissa_details.rename(columns={'survey_no': 'DXF_TEXT'}, inplace=True)
+hissa_details['DXF_TEXT'].dtype
+hissa_details['DXF_TEXT'] = pd.to_numeric(hissa_details['DXF_TEXT'], errors='coerce')
+
+B['DXF_TEXT'] = pd.to_numeric(B['DXF_TEXT'], errors='coerce')
+B['DXF_TEXT'] = B['DXF_TEXT'].astype(int)
+B.head()
+
+merged_df = pd.merge(B, hissa_details, on=['Village', 'DXF_TEXT'], how="inner")
+
+'''
 
 
 '''---------------------------------------------------------------------- Data Fetching -----------------------------------------------------------------------'''
